@@ -1,7 +1,8 @@
-version: '2'
+version: '3'
 
 services:
   proxy:
+    container_name: caddy-server
     image: abiosoft/caddy:no-stats
     restart: always
     ports:
@@ -25,6 +26,10 @@ services:
     ## without the reverse proxy. (debug only!!!)
     # ports:
     # - 8080:80
+    expose:
+      - "80"
+      - "443"
+      - "9000"
     environment:
     - REDIS_HOST=cache
     # database connection
@@ -37,6 +42,19 @@ services:
     - ./data/nextcloud_apps:/var/www/html/custom_apps:rw
     - ./data/nextcloud_data:/var/www/html/data:rw
 
+  onlyoffice-document-server:
+    container_name: onlyoffice-document-server
+    image: onlyoffice/documentserver:latest
+    stdin_open: true
+    tty: true
+    restart: always
+    expose:
+      - "80"
+      - "443"
+    volumes:
+      - ./data/document_data:/var/www/onlyoffice/Data
+      - ./data/document_log:/var/log/onlyoffice
+ 
   database:
     image: mariadb:latest
     restart: always
